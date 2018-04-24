@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Immutable from 'immutable';
 import InputBar from './input';
 import Note from './note';
+import * as db from '../services/datastore';
 import '../style.scss';
 
 
@@ -10,7 +11,6 @@ class NoteBoard extends Component {
     super(props);
     this.state = {
       notes: Immutable.Map(),
-      i: 0,
     };
     this.addPost = this.addPost.bind(this);
     this.deletePost = this.deletePost.bind(this);
@@ -18,27 +18,31 @@ class NoteBoard extends Component {
     this.displayPosts = this.displayPosts.bind(this);
   }
 
+  componentDidMount() {
+    console.log(this.props.boardId);
+
+    db.fetchNotes((notes) => {
+      console.log(notes);
+      this.setState({ notes: Immutable.Map(notes) });
+    }, this.props.boardId);
+  }
+
   addPost(newPost) {
-    console.log(newPost);
-    this.setState({
-      notes: this.state.notes.set(this.state.i, newPost),
-    });
-    this.state.i = this.state.i + 1;
+    db.createNote(newPost, this.props.boardId);
   }
 
   deletePost(id) {
-    this.setState({
-      notes: this.state.notes.delete(id),
-    });
+    db.deleteNote(id, this.props.boardId);
   }
 
   updatePost(id, fields) {
-    this.setState({
-      notes: this.state.notes.update(id, (n) => { return Object.assign({}, n, fields); }),
-    });
+    const newNote = Object.assign({}, this.state.notes.id, fields);
+    db.updateNote(id, newNote, this.props.boardId);
   }
 
   displayPosts() {
+    // console.log(this.state.notes);
+
     return this.state.notes.entrySeq().map(([id, note]) => {
       return (<Note
         key={id}
@@ -55,7 +59,6 @@ class NoteBoard extends Component {
       <div>
         <InputBar addPost={this.addPost} />
         {this.displayPosts()}
-
       </div>
     );
   }

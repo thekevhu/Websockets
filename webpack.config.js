@@ -1,6 +1,8 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
+const history = require('connect-history-api-fallback');
+const convert = require('koa-connect');
 
 const env = process.env.NODE_ENV || 'development';
 // set to 'production' or 'development' in your env
@@ -8,9 +10,15 @@ const env = process.env.NODE_ENV || 'development';
 const finalCSSLoader = (env === 'production') ? MiniCssExtractPlugin.loader : { loader: 'style-loader' };
 
 module.exports = {
-  mode: env,
+  mode: env, // right after:
+  output: { publicPath: '/' },
   entry: ['babel-polyfill', './src'], // this is where our app lives
   devtool: 'source-map', // this enables debugging with source in chrome devtools
+  devServer: {
+    historyApiFallback: true,
+    contentBase: './',
+    hot: true,
+  },
   module: {
     rules: [
       {
@@ -68,3 +76,15 @@ module.exports = {
     }),
   ],
 };
+
+if (env === 'development') {
+  module.exports.serve = {
+    content: [__dirname],
+    add: (app, middleware, options) => {
+      const historyOptions = {
+        index: '/index.html',
+      };
+      app.use(convert(history(historyOptions)));
+    },
+  };
+}

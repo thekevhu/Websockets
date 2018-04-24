@@ -1,21 +1,201 @@
+$medium-grey: #a4a4a4;
+$primary-color: #394539;
+$secondary-color: #e2c9bb;
 body, html {
   font-family: "Roboto", sans-serif;
   height: 100%;
+  padding:0;
+  margin:0;
+  background-color: #efd6c9;
 }
 #note{
-  height: 220px;
-  width: 220px;
-  background-color: beige;
+  background-color: #f7f2b2;
+  box-shadow: 4px 4px 8px gray;
+  min-width: 200px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   overflow-wrap:normal;
   word-break: break-all;
   color:black;
   border: 2px solid black;
   display: block;
   padding: 5px;
+  position: absolute;
 }
 
 
-#editTextArea{
-  height: 200px;
+#editTitle{
+    min-width: 100px;
+    height: 15px;
+    outline:none;
+}
+
+#editDesc{
+  min-width: 195px;
+  min-height: 160px;
+  outline:none;
+}
+
+
+#noteHeader{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 1px solid black;
+  margin:5px;
+}
+Nav{
+  height:100vh;
+  background: $primary-color;
+  border-right: 10px solid #758c83;
   width: 200px;
+  color:$secondary-color;
+}
+
+#page{
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+}
+
+#inputContainer{
+  width:80vw;
+  height:100px;
+}
+#inputBar{
+  width: 80%;
+  height:50px;
+  margin:10px;
+  margin-left: 30px;
+  border-radius: 3px;
+  border: 2px solid $primary-color;
+  font-size: 30px;
+  color: black;
+  outline:none;
+
+}
+
+#inputBarButton{
+  height:70px;
+  width:10%;
+  border-radius: 3px;
+  border: 2px solid $primary-color;
+  background-color: white;
+  padding:0;
+  margin:0;
+  outline:none;
+
+  font-size: 15px;
+  display: inline-block;
+  -webkit-appearance: none;
+  transition-duration: 0.5s;
+  -webkit-transition-duration: 0.5s;
+  -moz-transition-duration: 0.5s;
+  -ms-transition-duration: 0.5s;
+  -o-transition-duration: 0.5s;
+  transition-duration: 0.5s;
+
+}
+#inputBarButton:hover{
+  height:70px;
+  width:10%;
+  border-radius: 3px;
+  background-color: #f7f2b2;
+  border: 2px solid $primary-color;
+  padding:0;
+  margin:0;
+  font-size: 15px;
+  display: inline-block;
+  -webkit-appearance: none;
+  outline:none;
+
+}
+
+li{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+a {
+  color: $medium-grey;
+}
+
+a:link    {
+  color: $medium-grey;
+  text-decoration: none;
+  font-size: 14px;
+  transition-duration: 0.5s;
+  -webkit-transition-duration: 0.5s;
+  -moz-transition-duration: 0.5s;
+  -ms-transition-duration: 0.5s;
+  -o-transition-duration: 0.5s;
+  transition-duration: 0.5s;
+
+}
+a:hover    {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+
+}
+
+.active {
+  color: white;
+}
+
+
+.line {
+    width: 1.5px;
+    height: 100%;
+    background: $primary-color;
+    opacity: 0.2;
+   z-index: 1;
+}
+.line-container {
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    position: absolute;
+    height: 100%;
+    right: 2.5%;
+    left: 2.5%;
+    z-index: 1;
+}
+
+.line-container2 {
+    display: -webkit-box;
+    display: flex;
+    flex-direction: column;
+    -webkit-box-pack: justify;
+    justify-content: space-around;
+    position: absolute;
+    bottom:50px;
+    height: 50px;
+    width:100%;
+    z-index: 1;
+}
+
+.line2 {
+    width: 100%;
+    height: 3px;
+    background: red;
+    opacity: 0.3;
+    z-index: 1;
+}
+#main{
+  position: absolute;
+  z-index: 2;
+  padding:0;
+  margin:0;
+}
+
+#about{
+  display: flex;
+  font-size: 100px;
+  margin: 20px;
+  text-align: center;
+  color:white;
 }

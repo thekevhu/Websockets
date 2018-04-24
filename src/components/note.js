@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Textarea from 'react-textarea-autosize';
 import Draggable from 'react-draggable';
+import marked from 'marked';
 
 class Note extends Component {
   constructor(props) {
@@ -10,7 +11,10 @@ class Note extends Component {
       isEditing: false,
     };
     this.renderNote = this.renderNote.bind(this);
-    this.onInputChange = this.onInputChange.bind(this);
+    this.onDescChange = this.onDescChange.bind(this);
+    this.onTitleChange = this.onTitleChange.bind(this);
+    this.onDrag = this.onDrag.bind(this);
+    this.onStopDrag = this.onStopDrag.bind(this);
   }
 
   componentWillReceiveProps(props) {
@@ -20,43 +24,70 @@ class Note extends Component {
     this.setState({ yPosition: props.note.yPosition });
   }
 
-  onInputChange(event) {
+
+  onDescChange(event) {
     this.setState({ desc: event.target.value });
   }
 
+  onTitleChange(event) {
+    this.setState({ title: event.target.value });
+  }
+
+  onDrag(e, ui) {
+    this.setState({
+      xPosition: ui.x,
+      yPosition: ui.y,
+    });
+  }
+
+  onStopDrag() {
+    this.props.updatePost(this.props.id, this.state);
+  }
 
   renderNote() {
     if (this.state.isEditing) {
-      console.log('hi');
-
-      console.log(this.state.desc);
-      console.log('hi');
-
       return (
         <div id="note">
-          <div>{this.props.note.title} </div>
-          <i onClick={() => {
-            this.props.updatePost(this.props.id, this.state);
-            this.setState({ isEditing: false });
-          }}
-            className="fa fa-check"
-            aria-hidden="true"
+          <div id="noteHeader">
+            <div>
+              <Textarea id="editTitle"
+                value={this.props.note.title}
+                onChange={this.onTitleChange}
+              />
+              <i onClick={() => {
+                this.props.updatePost(this.props.id, this.state);
+                this.setState({
+                  isEditing: false,
+                });
+              }}
+                className="fa fa-check"
+                aria-hidden="true"
+              />
+              <i onClick={() => this.props.deletePost(this.props.id)} className="fa fa-trash-o" aria-hidden="true" />
+            </div>
+            <i className=" note-mover fa fa-arrows-alt" aria-hidden="true" />
+          </div>
+
+          <Textarea id="editDesc"
+            value={this.state.desc}
+            onChange={this.onDescChange}
           />
-          <i onClick={() => this.props.deletePost(parseInt(this.props.id))} className="fa fa-trash-o" aria-hidden="true" />
-
-
-          <Textarea id="editTextArea" value={this.state.desc} onChange={this.onInputChange} />
 
         </div>
       );
     } else {
       return (
         <div id="note">
-          <div>{this.props.note.title} </div>
-          <i onClick={() => this.setState({ isEditing: true })} className="fa fa-pencil" aria-hidden="true" />
-          <i onClick={() => this.props.deletePost(parseInt(this.props.id))} className="fa fa-trash-o" aria-hidden="true" />
 
-          <div>{this.props.note.desc} </div>
+          <div id="noteHeader">
+            <div>
+              {this.props.note.title}
+              <i onClick={() => this.setState({ isEditing: true })} className="fa fa-pencil" aria-hidden="true" />
+              <i onClick={() => this.props.deletePost(this.props.id)} className="fa fa-trash-o" aria-hidden="true" />
+            </div>
+            <i className=" note-mover fa fa-arrows-alt" aria-hidden="true" />
+          </div>
+          <div className="noteBody" dangerouslySetInnerHTML={{ __html: marked(this.props.note.desc || '') }} />
         </div>
       );
     }
@@ -67,9 +98,8 @@ class Note extends Component {
       <div >
         <Draggable
           handle=".note-mover"
-          grid={[25, 25]}
-          defaultPosition={{ x: 20, y: 20 }}
-          position={null}
+          defaultPosition={{ x: this.props.note.xPosition, y: this.props.note.yPosition }}
+          position={{ x: this.props.note.xPosition, y: this.props.note.yPosition }}
           onStart={this.onStartDrag}
           onDrag={this.onDrag}
           onStop={this.onStopDrag}

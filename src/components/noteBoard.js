@@ -19,10 +19,7 @@ class NoteBoard extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.boardId);
-
     db.fetchNotes((notes) => {
-      console.log(notes);
       this.setState({ notes: Immutable.Map(notes) });
     }, this.props.boardId);
   }
@@ -41,8 +38,6 @@ class NoteBoard extends Component {
   }
 
   displayPosts() {
-    // console.log(this.state.notes);
-
     return this.state.notes.entrySeq().map(([id, note]) => {
       return (<Note
         key={id}

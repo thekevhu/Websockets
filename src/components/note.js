@@ -9,6 +9,7 @@ class Note extends Component {
 
     this.state = {
       isEditing: false,
+      title: this.props.note.title,
     };
     this.renderNote = this.renderNote.bind(this);
     this.onDescChange = this.onDescChange.bind(this);
@@ -18,6 +19,7 @@ class Note extends Component {
   }
 
   componentWillReceiveProps(props) {
+    console.log(props);
     this.setState({ title: props.note.title });
     this.setState({ desc: props.note.desc });
     this.setState({ xPosition: props.note.xPosition });
@@ -51,7 +53,7 @@ class Note extends Component {
           <div id="noteHeader">
             <div>
               <Textarea id="editTitle"
-                value={this.props.note.title}
+                value={this.state.title}
                 onChange={this.onTitleChange}
               />
               <i onClick={() => {

@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import Immutable from 'immutable';
+import io from 'socket.io-client';
+
 import InputBar from './input';
 import Note from './note';
-import * as db from '../services/datastore';
+
+// import * as db from '../services/datastore';
 import '../style.scss';
 
+const socketserver = 'http://localhost:9090';
 
 class NoteBoard extends Component {
   constructor(props) {
@@ -12,6 +16,13 @@ class NoteBoard extends Component {
     this.state = {
       notes: Immutable.Map(),
     };
+
+    this.socket = io(socketserver);
+    this.socket.on('connect', () => { console.log('socket.io connected'); });
+    this.socket.on('disconnect', () => { console.log('socket.io disconnected'); });
+    this.socket.on('reconnect', () => { console.log('socket.io reconnected'); });
+    this.socket.on('error', (error) => { console.log(error); });
+
     this.addPost = this.addPost.bind(this);
     this.deletePost = this.deletePost.bind(this);
     this.updatePost = this.updatePost.bind(this);
@@ -19,22 +30,22 @@ class NoteBoard extends Component {
   }
 
   componentDidMount() {
-    db.fetchNotes((notes) => {
+    this.socket.on('notes', (notes) => {
       this.setState({ notes: Immutable.Map(notes) });
     }, this.props.boardId);
   }
 
-  addPost(newPost) {
-    db.createNote(newPost, this.props.boardId);
+  addPost(note) {
+    this.socket.emit('createNote', note);
   }
 
   deletePost(id) {
-    db.deleteNote(id, this.props.boardId);
+    this.socket.emit('deleteNote', id);
   }
 
-  updatePost(id, fields) {
-    const newNote = Object.assign({}, this.state.notes.id, fields);
-    db.updateNote(id, newNote, this.props.boardId);
+  updatePost(id, newNote) {
+    const fields = Object.assign({}, this.state.notes.id, newNote);
+    this.socket.emit('updateNote', id, fields);
   }
 
   displayPosts() {
